@@ -156,8 +156,8 @@
     state: present
     update_cache: true
 
-# ── Ansible (ensure latest via pip) ──────────────────────────────────────────
-- name: Ensure Ansible is installed via pip
+# ── Ansible (ensure latest via pipx) ─────────────────────────────────────────
+- name: Ensure Ansible is installed via pipx
   ansible.builtin.shell: |
-    python3 -m pip install --upgrade ansible --user
+    pipx install ansible --include-deps 2>/dev/null || pipx upgrade ansible
   changed_when: false
