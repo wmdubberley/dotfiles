@@ -18,7 +18,7 @@ sudo apt-get install -y git curl gpg pass ansible unzip wget
 echo ""
 echo "[2/7] GPG key restoration"
 echo "  Insert your USB drive and import your GPG private key:"
-echo "    gpg --import /media/william/keyfob/gpg-william-6B09748DDE4B5B88-2026.asc"
+echo "    gpg --import /media/\$USER/keyfob/gpg-william-6B09748DDE4B5B88-2026.asc"
 echo ""
 read -rp "  Press ENTER once 'gpg --list-secret-keys' shows your key > "
 
