@@ -58,14 +58,6 @@
   args:
     creates: /usr/local/bin/minikube
 
-# ── Azure CLI ─────────────────────────────────────────────────────────────────
-- name: Install Azure CLI
-  become: true
-  ansible.builtin.shell: |
-    curl -sL https://aka.ms/InstallAzureCLIDeb | bash
-  args:
-    creates: /usr/bin/az
-
 # ── Google Chrome ─────────────────────────────────────────────────────────────
 - name: Install Google Chrome
   become: true
@@ -106,39 +98,3 @@
   args:
     creates: "{{ ansible_env.HOME }}/sqlcl/bin/sql"
 
-# ── dbt ───────────────────────────────────────────────────────────────────────
-- name: Install dbt (core + Oracle adapter)
-  ansible.builtin.shell: |
-    pipx install dbt-core 2>/dev/null || true
-    pipx inject dbt-core dbt-oracle 2>/dev/null || true
-  args:
-    creates: "{{ ansible_env.HOME }}/.local/bin/dbt"
-
-# ── Snowflake CLI ─────────────────────────────────────────────────────────────
-- name: Install Snowflake CLI
-  ansible.builtin.shell: |
-    pipx install snowflake-cli
-  args:
-    creates: "{{ ansible_env.HOME }}/.local/bin/snow"
-
-# ── MongoDB CLI ───────────────────────────────────────────────────────────────
-- name: Install MongoDB CLI
-  become: true
-  ansible.builtin.shell: |
-    wget -q https://fastdl.mongodb.org/mongocli/mongodb-mongocli_1.30.0_linux_x86_64.deb \
-      -O /tmp/mongocli.deb
-    apt-get install -y /tmp/mongocli.deb
-    rm /tmp/mongocli.deb
-  args:
-    creates: /usr/bin/mongocli
-
-# ── Liquibase ─────────────────────────────────────────────────────────────────
-- name: Install Liquibase
-  ansible.builtin.shell: |
-    mkdir -p {{ ansible_env.HOME }}/Programs/liquidbase
-    wget -q https://github.com/liquibase/liquibase/releases/download/v4.26.0/liquibase-4.26.0.zip \
-      -O /tmp/liquibase.zip
-    unzip -q /tmp/liquibase.zip -d {{ ansible_env.HOME }}/Programs/liquidbase/liquibase-4.26.0
-    rm /tmp/liquibase.zip
-  args:
-    creates: "{{ ansible_env.HOME }}/Programs/liquidbase/liquibase-4.26.0/liquibase"
