@@ -17,7 +17,7 @@
       - python3-venv
       - btop
       - htop
-      - exa
+      - eza
       - tree
       - jq
       - xclip
