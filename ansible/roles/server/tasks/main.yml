@@ -15,7 +15,9 @@
     append: true
 
 # ── Server Python tools ───────────────────────────────────────────────────────
-- name: Install server Python packages
+- name: Install server Python packages via pipx
   ansible.builtin.shell: |
-    python3 -m pip install dbt-core dbt-oracle oci-cli --user
+    pipx install oci-cli 2>/dev/null || true
+    pipx install dbt-core 2>/dev/null || true
+    pipx inject dbt-core dbt-oracle 2>/dev/null || true
   changed_when: false
