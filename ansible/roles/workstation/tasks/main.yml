@@ -114,6 +114,7 @@
   ansible.builtin.shell: calibre-uninstall --yes
   args:
     removes: /usr/bin/calibre
+  when: "'laptops' in group_names"
 
 # ── SQLcl ─────────────────────────────────────────────────────────────────────
 - name: Install SQLcl
