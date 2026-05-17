@@ -71,11 +71,12 @@ cat > /tmp/bootstrap_inventory.ini << EOF
 localhost ansible_connection=local
 EOF
 
+# Cache sudo credentials so Ansible become works without prompting
+echo "$BECOME_PASS" | sudo -S -v
+
 cd "$DOTFILES_DIR"
-export ANSIBLE_BECOME_PASS="$BECOME_PASS"
 ansible-playbook ansible/playbook.yml \
   -i /tmp/bootstrap_inventory.ini
-unset ANSIBLE_BECOME_PASS
 
 rm -f /tmp/bootstrap_inventory.ini
 
