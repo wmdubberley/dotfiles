@@ -29,6 +29,8 @@
       - ca-certificates
       - bc
       - default-jdk
+      - terminator
+      - tmux
     state: present
     update_cache: true
 
