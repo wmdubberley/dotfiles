@@ -10,7 +10,7 @@
 - name: Add user to docker group
   become: true
   ansible.builtin.user:
-    name: "{{ ansible_env.USER }}"
+    name: "{{ ansible_facts['env']['USER'] }}"
     groups: docker
     append: true
 
@@ -24,18 +24,18 @@
 
 - name: Create .kube directory
   ansible.builtin.file:
-    path: "{{ ansible_env.HOME }}/.kube"
+    path: "{{ ansible_facts['env']['HOME'] }}/.kube"
     state: directory
     mode: "0700"
 
 - name: Copy k3s kubeconfig for user
   become: true
   ansible.builtin.shell: |
-    cp /etc/rancher/k3s/k3s.yaml {{ ansible_env.HOME }}/.kube/config
-    chown {{ ansible_env.USER }}:{{ ansible_env.USER }} {{ ansible_env.HOME }}/.kube/config
-    chmod 600 {{ ansible_env.HOME }}/.kube/config
+    cp /etc/rancher/k3s/k3s.yaml {{ ansible_facts['env']['HOME'] }}/.kube/config
+    chown {{ ansible_facts['env']['USER'] }}:{{ ansible_facts['env']['USER'] }} {{ ansible_facts['env']['HOME'] }}/.kube/config
+    chmod 600 {{ ansible_facts['env']['HOME'] }}/.kube/config
   args:
-    creates: "{{ ansible_env.HOME }}/.kube/config"
+    creates: "{{ ansible_facts['env']['HOME'] }}/.kube/config"
 
 # ── Helm ──────────────────────────────────────────────────────────────────────
 - name: Install Helm

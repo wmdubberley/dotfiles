@@ -85,12 +85,12 @@
   ansible.builtin.shell: |
     sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
   args:
-    creates: "{{ ansible_env.HOME }}/.oh-my-zsh"
+    creates: "{{ ansible_facts['env']['HOME'] }}/.oh-my-zsh"
 
 - name: Set zsh as default shell
   become: true
   ansible.builtin.user:
-    name: "{{ ansible_env.USER }}"
+    name: "{{ ansible_facts['env']['USER'] }}"
     shell: /usr/bin/zsh
 
 # ── nvm + Node ────────────────────────────────────────────────────────────────
@@ -98,11 +98,11 @@
   ansible.builtin.shell: |
     curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
   args:
-    creates: "{{ ansible_env.HOME }}/.nvm/nvm.sh"
+    creates: "{{ ansible_facts['env']['HOME'] }}/.nvm/nvm.sh"
 
 - name: Install Node LTS via nvm
   ansible.builtin.shell: |
-    export NVM_DIR="{{ ansible_env.HOME }}/.nvm"
+    export NVM_DIR="{{ ansible_facts['env']['HOME'] }}/.nvm"
     source "$NVM_DIR/nvm.sh"
     nvm install --lts
     nvm use --lts
@@ -113,7 +113,7 @@
 # ── Claude Code ───────────────────────────────────────────────────────────────
 - name: Install Claude Code (npm global)
   ansible.builtin.shell: |
-    export NVM_DIR="{{ ansible_env.HOME }}/.nvm"
+    export NVM_DIR="{{ ansible_facts['env']['HOME'] }}/.nvm"
     source "$NVM_DIR/nvm.sh"
     npm install -g @anthropic-ai/claude-code
   args:
@@ -122,16 +122,16 @@
 # ── chezmoi ───────────────────────────────────────────────────────────────────
 - name: Install chezmoi
   ansible.builtin.shell: |
-    sh -c "$(curl -fsLS get.chezmoi.io)" -- -b {{ ansible_env.HOME }}/.local/bin
+    sh -c "$(curl -fsLS get.chezmoi.io)" -- -b {{ ansible_facts['env']['HOME'] }}/.local/bin
   args:
-    creates: "{{ ansible_env.HOME }}/.local/bin/chezmoi"
+    creates: "{{ ansible_facts['env']['HOME'] }}/.local/bin/chezmoi"
 
 # ── OCI CLI ───────────────────────────────────────────────────────────────────
 - name: Install OCI CLI via pipx
   ansible.builtin.shell: |
     pipx install oci-cli
   args:
-    creates: "{{ ansible_env.HOME }}/.local/bin/oci"
+    creates: "{{ ansible_facts['env']['HOME'] }}/.local/bin/oci"
 
 # ── kubectl ───────────────────────────────────────────────────────────────────
 - name: Add Kubernetes apt keyring

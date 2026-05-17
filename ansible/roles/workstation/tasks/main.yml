@@ -44,7 +44,7 @@
 - name: Add user to docker group
   become: true
   ansible.builtin.user:
-    name: "{{ ansible_env.USER }}"
+    name: "{{ ansible_facts['env']['USER'] }}"
     groups: docker
     append: true
 
@@ -104,16 +104,16 @@
 - name: Remove dbt via pipx
   ansible.builtin.shell: pipx uninstall dbt-core
   args:
-    removes: "{{ ansible_env.HOME }}/.local/bin/dbt"
+    removes: "{{ ansible_facts['env']['HOME'] }}/.local/bin/dbt"
 
 - name: Remove Snowflake CLI via pipx
   ansible.builtin.shell: pipx uninstall snowflake-cli
   args:
-    removes: "{{ ansible_env.HOME }}/.local/bin/snow"
+    removes: "{{ ansible_facts['env']['HOME'] }}/.local/bin/snow"
 
 - name: Remove Liquibase directory
   ansible.builtin.file:
-    path: "{{ ansible_env.HOME }}/Programs/liquidbase"
+    path: "{{ ansible_facts['env']['HOME'] }}/Programs/liquidbase"
     state: absent
 
 # ── SQLcl ─────────────────────────────────────────────────────────────────────
@@ -121,8 +121,8 @@
   ansible.builtin.shell: |
     wget -q https://download.oracle.com/otn_software/java/sqldeveloper/sqlcl-latest.zip \
       -O /tmp/sqlcl.zip
-    unzip -q /tmp/sqlcl.zip -d {{ ansible_env.HOME }}
+    unzip -q /tmp/sqlcl.zip -d {{ ansible_facts['env']['HOME'] }}
     rm /tmp/sqlcl.zip
   args:
-    creates: "{{ ansible_env.HOME }}/sqlcl/bin/sql"
+    creates: "{{ ansible_facts['env']['HOME'] }}/sqlcl/bin/sql"
 
