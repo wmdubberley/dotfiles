@@ -1,0 +1,102 @@
+---
+# ── Docker Engine ─────────────────────────────────────────────────────────────
+- name: Install Docker Engine
+  become: true
+  ansible.builtin.shell: |
+    curl -fsSL https://get.docker.com | sh
+  args:
+    creates: /usr/bin/docker
+
+- name: Add user to docker group
+  become: true
+  ansible.builtin.user:
+    name: "{{ ansible_env.USER }}"
+    groups: docker
+    append: true
+
+# ── k3s ───────────────────────────────────────────────────────────────────────
+- name: Install k3s
+  become: true
+  ansible.builtin.shell: |
+    curl -sfL https://get.k3s.io | sh -
+  args:
+    creates: /usr/local/bin/k3s
+
+- name: Create .kube directory
+  ansible.builtin.file:
+    path: "{{ ansible_env.HOME }}/.kube"
+    state: directory
+    mode: "0700"
+
+- name: Copy k3s kubeconfig for user
+  become: true
+  ansible.builtin.shell: |
+    cp /etc/rancher/k3s/k3s.yaml {{ ansible_env.HOME }}/.kube/config
+    chown {{ ansible_env.USER }}:{{ ansible_env.USER }} {{ ansible_env.HOME }}/.kube/config
+    chmod 600 {{ ansible_env.HOME }}/.kube/config
+  args:
+    creates: "{{ ansible_env.HOME }}/.kube/config"
+
+# ── Helm ──────────────────────────────────────────────────────────────────────
+- name: Install Helm
+  ansible.builtin.shell: |
+    curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+  args:
+    creates: /usr/local/bin/helm
+  become: true
+
+# ── Portainer ─────────────────────────────────────────────────────────────────
+- name: Create Portainer data volume
+  ansible.builtin.shell: |
+    docker volume create portainer_data
+  changed_when: false
+
+- name: Run Portainer CE container
+  ansible.builtin.shell: |
+    docker run -d \
+      --name portainer \
+      --restart=always \
+      -p 9000:9000 \
+      -p 9443:9443 \
+      -v /var/run/docker.sock:/var/run/docker.sock \
+      -v portainer_data:/data \
+      portainer/portainer-ce:latest
+  args:
+    creates: /var/lib/docker/volumes/portainer_data
+
+# ── External drive mount points ───────────────────────────────────────────────
+- name: Create storage mount point directories
+  become: true
+  ansible.builtin.file:
+    path: "/mnt/{{ item }}"
+    state: directory
+    mode: "0775"
+    group: sambashare
+  loop: "{{ storage_mounts }}"
+
+# ── Samba ─────────────────────────────────────────────────────────────────────
+- name: Install Samba
+  become: true
+  ansible.builtin.apt:
+    name:
+      - samba
+      - samba-common-bin
+    state: present
+
+- name: Deploy smb.conf
+  become: true
+  ansible.builtin.template:
+    src: smb.conf.j2
+    dest: /etc/samba/smb.conf
+    mode: "0644"
+  notify: Restart Samba
+
+- name: Enable and start Samba services
+  become: true
+  ansible.builtin.systemd:
+    name: "{{ item }}"
+    enabled: true
+    state: started
+  loop:
+    - smbd
+    - nmbd

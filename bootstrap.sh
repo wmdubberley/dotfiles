@@ -38,10 +38,12 @@ echo "[4/7] Select machine type"
 echo "  1) workstations  (desktop/laptop — full GUI + dev tools)"
 echo "  2) servers       (headless — docker, kubectl, CLI tools)"
 echo "  3) minimal       (CLI only — zsh, git, OCI CLI, VSCode)"
-read -rp "  Choice [1-3]: " MACHINE_TYPE_NUM
+echo "  4) homeservers   (local dev cluster — k3s, Docker, Samba, Portainer)"
+read -rp "  Choice [1-4]: " MACHINE_TYPE_NUM
 case $MACHINE_TYPE_NUM in
   2) MACHINE_GROUP="servers" ;;
   3) MACHINE_GROUP="minimal" ;;
+  4) MACHINE_GROUP="homeservers" ;;
   *) MACHINE_GROUP="workstations" ;;
 esac
 echo "  Machine group: $MACHINE_GROUP"

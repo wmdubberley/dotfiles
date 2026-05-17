@@ -1,0 +1,21 @@
+[global]
+   workgroup = WORKGROUP
+   server string = homeserver
+   security = user
+   map to guest = Bad User
+   guest account = nobody
+   log file = /var/log/samba/log.%m
+   max log size = 1000
+   logging = file
+
+{% for mount in storage_mounts %}
+[{{ mount }}]
+   path = /mnt/{{ mount }}
+   browseable = yes
+   guest ok = yes
+   read only = no
+   create mask = 0664
+   directory mask = 0775
+   force group = sambashare
+
+{% endfor %}
