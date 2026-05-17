@@ -96,20 +96,6 @@
   args:
     creates: /usr/bin/drawio
 
-# ── ckb-next (Corsair keyboard) ───────────────────────────────────────────────
-- name: Add ckb-next PPA
-  become: true
-  ansible.builtin.apt_repository:
-    repo: ppa:tatokis/ckb-next
-    state: present
-
-- name: Install ckb-next
-  become: true
-  ansible.builtin.apt:
-    name: ckb-next
-    state: present
-    update_cache: true
-
 # ── SQLcl ─────────────────────────────────────────────────────────────────────
 - name: Install SQLcl
   ansible.builtin.shell: |
@@ -123,14 +109,15 @@
 # ── dbt ───────────────────────────────────────────────────────────────────────
 - name: Install dbt (core + Oracle adapter)
   ansible.builtin.shell: |
-    python3 -m pip install dbt-core dbt-oracle --user
+    pipx install dbt-core 2>/dev/null || true
+    pipx inject dbt-core dbt-oracle 2>/dev/null || true
   args:
     creates: "{{ ansible_env.HOME }}/.local/bin/dbt"
 
 # ── Snowflake CLI ─────────────────────────────────────────────────────────────
 - name: Install Snowflake CLI
   ansible.builtin.shell: |
-    python3 -m pip install snowflake-cli --user
+    pipx install snowflake-cli
   args:
     creates: "{{ ansible_env.HOME }}/.local/bin/snow"
 
