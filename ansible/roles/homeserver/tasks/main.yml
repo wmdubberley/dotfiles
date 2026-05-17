@@ -77,10 +77,10 @@
 # ── Samba ─────────────────────────────────────────────────────────────────────
 - name: Install Samba
   become: true
-  ansible.builtin.apt:
+  ansible.builtin.dnf:
     name:
       - samba
-      - samba-common-bin
+      - samba-common
     state: present
 
 - name: Deploy smb.conf
@@ -100,3 +100,12 @@
   loop:
     - smbd
     - nmbd
+
+- name: Open Samba ports in firewalld
+  become: true
+  ansible.posix.firewalld:
+    service: samba
+    permanent: true
+    state: enabled
+    immediate: true
+  ignore_errors: true

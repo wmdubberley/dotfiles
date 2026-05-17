@@ -10,8 +10,15 @@ PASS_REPO="${PASS_REPO:-https://github.com/wmdubberley/pass-store.git}"
 
 # ── Step 1: Base dependencies ─────────────────────────────────────────────────
 echo "[1/7] Installing base dependencies..."
-sudo apt-get update -qq
-sudo apt-get install -y git curl gpg pass ansible unzip wget
+if command -v apt-get &>/dev/null; then
+  sudo apt-get update -qq
+  sudo apt-get install -y git curl gpg pass ansible unzip wget
+elif command -v dnf &>/dev/null; then
+  sudo dnf install -y epel-release
+  sudo dnf install -y git curl gnupg2 pass ansible unzip wget
+else
+  echo "ERROR: No supported package manager found (apt/dnf)" && exit 1
+fi
 
 # ── Step 2: GPG key restoration ───────────────────────────────────────────────
 echo ""
