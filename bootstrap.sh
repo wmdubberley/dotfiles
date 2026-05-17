@@ -2,20 +2,7 @@
 set -euo pipefail
 
 DOTFILES_REPO="${DOTFILES_REPO:-https://github.com/wmdubberley/dotfiles.git}"
-PASS_REPO_BASE="https://github.com/wmdubberley/pass-store.git"
-
-echo "========================================"
-echo "  William's Machine Bootstrap"
-echo "========================================"
-echo ""
-echo "  You will need:"
-echo "  - Your USB keyfob (GPG key)"
-echo "  - A GitHub Personal Access Token with 'repo' scope"
-echo "    Create one at: github.com → Settings → Developer settings → PAT"
-echo ""
-read -rsp "  GitHub PAT (input hidden): " GITHUB_PAT
-echo ""
-PASS_REPO="https://${GITHUB_PAT}@github.com/wmdubberley/pass-store.git"
+PASS_REPO="${PASS_REPO:-https://github.com/wmdubberley/pass-store.git}"
 
 # ── Step 1: Base dependencies ─────────────────────────────────────────────────
 echo "[1/7] Installing base dependencies..."
