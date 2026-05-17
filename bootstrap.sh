@@ -43,14 +43,12 @@ fi
 echo ""
 echo "[4/7] Select machine type"
 echo "  1) workstations  (desktop — full GUI + dev tools)"
-echo "  2) servers       (headless — docker, kubectl, CLI tools)"
-echo "  3) laptops       (laptop — full GUI + dev tools)"
-echo "  4) homeservers   (local dev cluster — k3s, Docker, Samba, Portainer)"
-read -rp "  Choice [1-4]: " MACHINE_TYPE_NUM
+echo "  2) laptops       (laptop — full GUI + dev tools)"
+echo "  3) servers       (Oracle Linux — k3s, Docker, Samba, Portainer)"
+read -rp "  Choice [1-3]: " MACHINE_TYPE_NUM
 case $MACHINE_TYPE_NUM in
-  2) MACHINE_GROUP="servers" ;;
-  3) MACHINE_GROUP="laptops" ;;
-  4) MACHINE_GROUP="homeservers" ;;
+  2) MACHINE_GROUP="laptops" ;;
+  3) MACHINE_GROUP="servers" ;;
   *) MACHINE_GROUP="workstations" ;;
 esac
 echo "  Machine group: $MACHINE_GROUP"
