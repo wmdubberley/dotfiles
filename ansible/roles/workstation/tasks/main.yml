@@ -1,0 +1,157 @@
+---
+# ── Desktop APT packages ──────────────────────────────────────────────────────
+- name: Install workstation apt packages
+  become: true
+  ansible.builtin.apt:
+    name:
+      - gimp
+      - libreoffice
+      - audacity
+      - hplip
+      - mysql-shell
+      - cava
+      - maven
+      - libpq-dev
+    state: present
+    update_cache: true
+
+# ── .NET SDK ──────────────────────────────────────────────────────────────────
+- name: Add Microsoft .NET package feed
+  become: true
+  ansible.builtin.shell: |
+    wget -q https://packages.microsoft.com/config/ubuntu/22.04/packages-microsoft-prod.deb \
+      -O /tmp/packages-microsoft-prod.deb
+    dpkg -i /tmp/packages-microsoft-prod.deb
+    rm /tmp/packages-microsoft-prod.deb
+    apt-get update
+  args:
+    creates: /etc/apt/sources.list.d/microsoft-prod.list
+
+- name: Install dotnet-sdk-8.0
+  become: true
+  ansible.builtin.apt:
+    name: dotnet-sdk-8.0
+    state: present
+
+# ── Docker ────────────────────────────────────────────────────────────────────
+- name: Install Docker Engine
+  become: true
+  ansible.builtin.shell: |
+    curl -fsSL https://get.docker.com | sh
+  args:
+    creates: /usr/bin/docker
+
+- name: Add user to docker group
+  become: true
+  ansible.builtin.user:
+    name: "{{ ansible_env.USER }}"
+    groups: docker
+    append: true
+
+# ── minikube ──────────────────────────────────────────────────────────────────
+- name: Install minikube
+  become: true
+  ansible.builtin.shell: |
+    curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
+    install minikube-linux-amd64 /usr/local/bin/minikube
+    rm minikube-linux-amd64
+  args:
+    creates: /usr/local/bin/minikube
+
+# ── Azure CLI ─────────────────────────────────────────────────────────────────
+- name: Install Azure CLI
+  become: true
+  ansible.builtin.shell: |
+    curl -sL https://aka.ms/InstallAzureCLIDeb | bash
+  args:
+    creates: /usr/bin/az
+
+# ── Google Chrome ─────────────────────────────────────────────────────────────
+- name: Install Google Chrome
+  become: true
+  ansible.builtin.shell: |
+    wget -q https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb \
+      -O /tmp/chrome.deb
+    apt-get install -y /tmp/chrome.deb
+    rm /tmp/chrome.deb
+  args:
+    creates: /usr/bin/google-chrome
+
+# ── Calibre ───────────────────────────────────────────────────────────────────
+- name: Install Calibre
+  ansible.builtin.shell: |
+    wget -nv -O- https://download.calibre-ebook.com/linux-installer.sh | sh /dev/stdin
+  args:
+    creates: /usr/bin/calibre
+
+# ── draw.io ───────────────────────────────────────────────────────────────────
+- name: Install draw.io desktop
+  become: true
+  ansible.builtin.shell: |
+    LATEST=$(curl -s https://api.github.com/repos/jgraph/drawio-desktop/releases/latest \
+      | grep browser_download_url | grep amd64.deb | cut -d '"' -f 4)
+    wget -q "$LATEST" -O /tmp/drawio.deb
+    apt-get install -y /tmp/drawio.deb
+    rm /tmp/drawio.deb
+  args:
+    creates: /usr/bin/drawio
+
+# ── ckb-next (Corsair keyboard) ───────────────────────────────────────────────
+- name: Add ckb-next PPA
+  become: true
+  ansible.builtin.apt_repository:
+    repo: ppa:tatokis/ckb-next
+    state: present
+
+- name: Install ckb-next
+  become: true
+  ansible.builtin.apt:
+    name: ckb-next
+    state: present
+    update_cache: true
+
+# ── SQLcl ─────────────────────────────────────────────────────────────────────
+- name: Install SQLcl
+  ansible.builtin.shell: |
+    wget -q https://download.oracle.com/otn_software/java/sqldeveloper/sqlcl-latest.zip \
+      -O /tmp/sqlcl.zip
+    unzip -q /tmp/sqlcl.zip -d {{ ansible_env.HOME }}
+    rm /tmp/sqlcl.zip
+  args:
+    creates: "{{ ansible_env.HOME }}/sqlcl/bin/sql"
+
+# ── dbt ───────────────────────────────────────────────────────────────────────
+- name: Install dbt (core + Oracle adapter)
+  ansible.builtin.shell: |
+    python3 -m pip install dbt-core dbt-oracle --user
+  args:
+    creates: "{{ ansible_env.HOME }}/.local/bin/dbt"
+
+# ── Snowflake CLI ─────────────────────────────────────────────────────────────
+- name: Install Snowflake CLI
+  ansible.builtin.shell: |
+    python3 -m pip install snowflake-cli --user
+  args:
+    creates: "{{ ansible_env.HOME }}/.local/bin/snow"
+
+# ── MongoDB CLI ───────────────────────────────────────────────────────────────
+- name: Install MongoDB CLI
+  become: true
+  ansible.builtin.shell: |
+    wget -q https://fastdl.mongodb.org/mongocli/mongodb-mongocli_1.30.0_linux_x86_64.deb \
+      -O /tmp/mongocli.deb
+    apt-get install -y /tmp/mongocli.deb
+    rm /tmp/mongocli.deb
+  args:
+    creates: /usr/bin/mongocli
+
+# ── Liquibase ─────────────────────────────────────────────────────────────────
+- name: Install Liquibase
+  ansible.builtin.shell: |
+    mkdir -p {{ ansible_env.HOME }}/Programs/liquidbase
+    wget -q https://github.com/liquibase/liquibase/releases/download/v4.26.0/liquibase-4.26.0.zip \
+      -O /tmp/liquibase.zip
+    unzip -q /tmp/liquibase.zip -d {{ ansible_env.HOME }}/Programs/liquidbase/liquibase-4.26.0
+    rm /tmp/liquibase.zip
+  args:
+    creates: "{{ ansible_env.HOME }}/Programs/liquidbase/liquibase-4.26.0/liquibase"

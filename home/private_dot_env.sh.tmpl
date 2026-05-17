@@ -1,0 +1,33 @@
+# Machine environment — rendered by chezmoi from pass at apply time.
+# Secrets live in pass; this file is created with 0600 permissions.
+
+# ── OCI ───────────────────────────────────────────────────────────────────────
+export OCI_TENANCY_OCID="{{ pass "oci/tenancy-ocid" }}"
+export OCI_USER_OCID="{{ pass "oci/user-ocid" }}"
+export OCI_FINGERPRINT="{{ pass "oci/fingerprint" }}"
+export OCI_PRIVATE_KEY_PATH="$HOME/.oci/oci_api_key.pem"
+export OCI_REGION="us-phoenix-1"
+
+# ── Oracle DB ─────────────────────────────────────────────────────────────────
+export ORACLE_USERNAME="{{ pass "oracle/username" }}"
+export ORACLE_PASSWORD="{{ pass "oracle/password" }}"
+export ORACLE_WALLET_PASSWORD="{{ pass "oracle/wallet-password" }}"
+export ORACLE_WALLET_ZIP="$HOME/Wallets/Wallet_contra.zip"
+
+# ── Atlassian ─────────────────────────────────────────────────────────────────
+export JIRA_USERNAME="wdubberley@pelotongroup.com"
+export JIRA_API_TOKEN="{{ pass "atlassian/api-token" }}"
+export CONFLUENCE_USERNAME="wdubberley@pelotongroup.com"
+export CONFLUENCE_API_TOKEN="{{ pass "atlassian/api-token" }}"
+
+# ── Misc ──────────────────────────────────────────────────────────────────────
+export REGIONALPASSWORD="{{ pass "misc/regional-password" }}"
+
+# ── Contravisory DB ───────────────────────────────────────────────────────────
+export DB_URL="{{ pass "db/contra/url" }}"
+export DB_USERNAME="{{ pass "db/contra/username" }}"
+export DB_PASSWORD="{{ pass "db/contra/password" }}"
+export CONTRA_LOG_DIR=/mnt/14tb/Contravisory/logs
+export CONTRA_LOG_APP=contrasignals.log
+export CONTRA_LOG_JOB=contrasignals-job.log
+export CONTRA_REPORT_DIR=/mnt/14tb/Contravisory/reports

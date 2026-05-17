@@ -1,0 +1,15 @@
+---
+- name: Apply common role to all machines
+  hosts: all
+  roles:
+    - common
+
+- name: Apply workstation role
+  hosts: workstations
+  roles:
+    - workstation
+
+- name: Apply server role
+  hosts: servers
+  roles:
+    - server

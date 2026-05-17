@@ -1,0 +1,12 @@
+[
+    {
+        "key": "ctrl+alt+u",
+        "command": "editor.action.transformToUppercase"
+    },
+    {
+        "key": "shift+enter",
+        "command": "workbench.action.terminal.sendSequence",
+        "args": { "text": "\r" },
+        "when": "terminalFocus"
+    }
+]

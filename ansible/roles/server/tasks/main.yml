@@ -1,0 +1,21 @@
+---
+# ── Docker Engine ─────────────────────────────────────────────────────────────
+- name: Install Docker Engine
+  become: true
+  ansible.builtin.shell: |
+    curl -fsSL https://get.docker.com | sh
+  args:
+    creates: /usr/bin/docker
+
+- name: Add user to docker group
+  become: true
+  ansible.builtin.user:
+    name: "{{ ansible_env.USER }}"
+    groups: docker
+    append: true
+
+# ── Server Python tools ───────────────────────────────────────────────────────
+- name: Install server Python packages
+  ansible.builtin.shell: |
+    python3 -m pip install dbt-core dbt-oracle oci-cli --user
+  changed_when: false

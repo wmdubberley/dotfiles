@@ -1,0 +1,145 @@
+Host oracle-vm
+   HostName localhost
+   Port 1922
+   User opc
+   IdentityFile ~/.ssh/peloton-ai-agentvm.pem
+   IdentitiesOnly yes
+   StrictHostKeyChecking no
+   UserKnownHostsFile /dev/null
+   AddKeysToAgent yes
+   ServerAliveInterval 15
+
+Host oci-LO-RJ-prod
+   HostName 129.146.130.84
+   IdentityFile ~/.ssh/default.key
+   User opc
+   Port 22
+   AddKeysToAgent yes
+   ServerAliveInterval 15
+
+Host tom-oci-LO-RJ-prod
+   User tomcat
+   HostName 129.146.130.84
+   IdentityFile ~/.ssh/default.key
+   IdentitiesOnly yes
+   Port 22
+   AddKeysToAgent yes
+   ServerAliveInterval 15
+
+Host oci-GG-AC
+   HostName 129.153.203.244
+   IdentityFile ~/.ssh/OGG.key
+   User opc
+   Port 22
+   AddKeysToAgent yes
+   ServerAliveInterval 15
+
+Host libertyGitLab
+   HostName gitlab.com
+   user william.dubberley@libertyenergy.com
+   IdentityFile ~/.ssh/LOS_GitLab.key
+   Port 22
+   AddKeysToAgent yes
+   ServerAliveInterval 15
+
+Host oci-gg-mongo
+   HostName 129.153.127.214
+   IdentityFile ~/.ssh/OGG.key
+   User opc
+   Port 22
+   AddKeysToAgent yes
+   ServerAliveInterval 15
+
+Host oci-gg-sqlserver
+   HostName 152.70.130.61
+   IdentityFile ~/.ssh/CodeWorkshop_2023_09_15
+   User opc
+   Port 22
+   AddKeysToAgent yes
+   ServerAliveInterval 15
+
+Host oci-PG-dbc
+   HostName 152.70.206.148
+   IdentityFile ~/.ssh/OCILabVM.key
+   User opc
+   Port 22
+   AddKeysToAgent yes
+   ServerAliveInterval 15
+
+Host oci-GitLab
+   HostName 141.148.183.248
+   IdentityFile ~/.ssh/LOS_GitLab.key
+   User opc
+   Port 22
+   AddKeysToAgent yes
+   ServerAliveInterval 15
+
+Host odi-cl-prod
+   HostName 129.146.229.31
+   IdentityFile ~/.ssh/ogg.key
+   User opc
+   Port 22
+   AddKeysToAgent yes
+   ServerAliveInterval 15
+
+Host odi-prod
+   HostName 129.146.252.58
+   IdentityFile ~/.ssh/oci.pem
+   User opc
+   Port 22
+   AddKeysToAgent yes
+   ServerAliveInterval 15
+
+Host dev1
+   HostName 132.226.145.186
+   IdentityFile ~/.ssh/customers/liberty/ssh-key-2025-01-09.key
+   Port 22
+   AddKeysToAgent yes
+   ServerAliveInterval 15
+   User ubuntu
+
+Host contra2
+   HostName 132.145.196.43
+   IdentityFile ~/.ssh/default.key
+   AddKeysToAgent yes
+   ServerAliveInterval 15
+   User opc
+
+Host contra2t
+   HostName 132.145.196.43
+   IdentityFile ~/.ssh/default.key
+   AddKeysToAgent yes
+   ServerAliveInterval 15
+   User tomcat
+
+Host rclone_text
+   HostName 150.136.94.227
+   IdentityFile ~/.ssh/customers/textainer/ssh-key-2025-08-27.key
+   AddKeysToAgent yes
+   ServerAliveInterval 15
+   User opc
+   IdentitiesOnly yes
+
+Host pel_lap
+   HostName 192.168.12.127
+   IdentityFile ~/.ssh/default.key
+   AddKeysToAgent yes
+   ServerAliveInterval 15
+   User william
+   IdentitiesOnly yes
+
+Host nodeserver
+   HostName 129.146.247.202
+   IdentityFile ~/.ssh/ssh-key-2026-02-13.key
+   AddKeysToAgent yes
+   ServerAliveInterval 15
+   User opc
+   IdentitiesOnly yes
+
+Host temp_Ubuntu
+   HostName 150.136.213.4
+   IdentityFile ~/.ssh/default.key
+   AddKeysToAgent yes
+   ServerAliveInterval 15
+   User ubuntu
+   IdentitiesOnly yes

@@ -1,0 +1,162 @@
+---
+# ── APT packages ──────────────────────────────────────────────────────────────
+- name: Install base apt packages
+  become: true
+  ansible.builtin.apt:
+    name:
+      - zsh
+      - git
+      - gpg
+      - pass
+      - curl
+      - wget
+      - unzip
+      - build-essential
+      - python3
+      - python3-pip
+      - python3-venv
+      - btop
+      - htop
+      - neofetch
+      - exa
+      - tree
+      - jq
+      - xclip
+      - net-tools
+      - software-properties-common
+      - apt-transport-https
+      - ca-certificates
+      - bc
+      - default-jdk
+    state: present
+    update_cache: true
+
+# ── VSCode ────────────────────────────────────────────────────────────────────
+- name: Add Microsoft GPG key
+  become: true
+  ansible.builtin.shell: |
+    wget -qO- https://packages.microsoft.com/keys/microsoft.asc \
+      | gpg --dearmor > /usr/share/keyrings/microsoft.gpg
+  args:
+    creates: /usr/share/keyrings/microsoft.gpg
+
+- name: Add VSCode apt repository
+  become: true
+  ansible.builtin.apt_repository:
+    repo: "deb [arch=amd64 signed-by=/usr/share/keyrings/microsoft.gpg] https://packages.microsoft.com/repos/code stable main"
+    state: present
+    filename: vscode
+
+- name: Install VSCode
+  become: true
+  ansible.builtin.apt:
+    name: code
+    state: present
+    update_cache: true
+
+- name: Install VSCode extensions
+  ansible.builtin.shell: code --install-extension {{ item }} --force
+  loop:
+    - ms-python.python
+    - donjayamanne.python-extension-pack
+    - ms-vscode-remote.remote-ssh
+    - ms-vscode-remote.remote-containers
+    - ms-vscode.remote-explorer
+    - ms-kubernetes-tools.vscode-kubernetes-tools
+    - ms-azuretools.vscode-containers
+    - redhat.vscode-yaml
+    - anthropic.claude-code
+    - atlassian.atlascode
+    - oracle.sql-developer
+    - mtxr.sqltools
+    - hediet.vscode-drawio
+    - janisdd.vscode-edit-csv
+    - mechatroner.rainbow-csv
+    - phplasma.csv-to-table
+    - ms-vscode.makefile-tools
+    - ms-vscode.powershell
+    - github.copilot
+    - tomoki1207.pdf
+  ignore_errors: true
+
+# ── oh-my-zsh ─────────────────────────────────────────────────────────────────
+- name: Install oh-my-zsh
+  ansible.builtin.shell: |
+    sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
+  args:
+    creates: "{{ ansible_env.HOME }}/.oh-my-zsh"
+
+- name: Set zsh as default shell
+  become: true
+  ansible.builtin.user:
+    name: "{{ ansible_env.USER }}"
+    shell: /usr/bin/zsh
+
+# ── nvm + Node ────────────────────────────────────────────────────────────────
+- name: Install nvm
+  ansible.builtin.shell: |
+    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+  args:
+    creates: "{{ ansible_env.HOME }}/.nvm/nvm.sh"
+
+- name: Install Node LTS via nvm
+  ansible.builtin.shell: |
+    export NVM_DIR="{{ ansible_env.HOME }}/.nvm"
+    source "$NVM_DIR/nvm.sh"
+    nvm install --lts
+    nvm use --lts
+    nvm alias default node
+  args:
+    executable: /bin/bash
+
+# ── Claude Code ───────────────────────────────────────────────────────────────
+- name: Install Claude Code (npm global)
+  ansible.builtin.shell: |
+    export NVM_DIR="{{ ansible_env.HOME }}/.nvm"
+    source "$NVM_DIR/nvm.sh"
+    npm install -g @anthropic-ai/claude-code
+  args:
+    executable: /bin/bash
+
+# ── chezmoi ───────────────────────────────────────────────────────────────────
+- name: Install chezmoi
+  ansible.builtin.shell: |
+    sh -c "$(curl -fsLS get.chezmoi.io)" -- -b {{ ansible_env.HOME }}/.local/bin
+  args:
+    creates: "{{ ansible_env.HOME }}/.local/bin/chezmoi"
+
+# ── OCI CLI ───────────────────────────────────────────────────────────────────
+- name: Install OCI CLI
+  ansible.builtin.shell: |
+    python3 -m pip install oci-cli --user
+  args:
+    creates: "{{ ansible_env.HOME }}/.local/bin/oci"
+
+# ── kubectl ───────────────────────────────────────────────────────────────────
+- name: Add Kubernetes apt keyring
+  become: true
+  ansible.builtin.shell: |
+    curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.30/deb/Release.key \
+      | gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+  args:
+    creates: /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+
+- name: Add Kubernetes apt repository
+  become: true
+  ansible.builtin.apt_repository:
+    repo: "deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.30/deb/ /"
+    state: present
+    filename: kubernetes
+
+- name: Install kubectl
+  become: true
+  ansible.builtin.apt:
+    name: kubectl
+    state: present
+    update_cache: true
+
+# ── Ansible (ensure latest via pip) ──────────────────────────────────────────
+- name: Ensure Ansible is installed via pip
+  ansible.builtin.shell: |
+    python3 -m pip install --upgrade ansible --user
+  changed_when: false

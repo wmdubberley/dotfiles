@@ -1,0 +1,12 @@
+[user]
+	email = {{ .git_email }}
+	name = {{ .git_name }}
+[core]
+	autocrlf = input
+	editor = code --wait
+[pull]
+	rebase = false
+[push]
+	autoSetupRemote = true
+[init]
+	defaultBranch = main

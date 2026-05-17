@@ -1,0 +1,65 @@
+# Chezmoi will not manage these paths in $HOME
+
+# Caches and runtime data
+.cache
+.nvm
+.oh-my-zsh
+.minikube
+.kube/cache
+.kube/http-cache
+.local
+
+# Browsers
+.mozilla
+.config/google-chrome
+
+# GPG — managed manually, NEVER in git
+.gnupg
+
+# SSH keys — backed up on USB, only config is tracked
+.ssh/customers
+.ssh/*.key
+.ssh/*.pem
+.ssh/*.pub
+.ssh/id_*
+.ssh/known_hosts
+.ssh/known_hosts.old
+.ssh/authorized_keys
+.ssh/.vault_pass
+
+# Password store — separate repo
+.password-store
+
+# Ansible collections cache
+.ansible/collections
+
+# Docker auth
+.docker/config.json
+
+# Auth tokens and cloud SDKs (only config files are tracked, not token files)
+.azure/accessTokens.json
+.azure/msal_token_cache.json
+.copilot
+.mcp-auth
+.dbtools
+
+# VSCode caches
+.config/Code/User/globalStorage
+.config/Code/User/workspaceStorage
+.config/Code/CachedData
+.config/Code/logs
+
+# Large app data — not worth syncing
+.config/GIMP
+.config/calibre
+.config/evolution
+
+# Tool runtime dirs
+.redhat
+.java
+.m2
+.dotnet
+.net
+.eclipse
+.sts4
+.rpmdb
