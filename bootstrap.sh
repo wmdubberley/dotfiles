@@ -24,8 +24,13 @@ read -rp "  Press ENTER once 'gpg --list-secret-keys' shows your key > "
 # ── Step 3: pass store ────────────────────────────────────────────────────────
 echo ""
 echo "[3/7] Clone pass store"
-git clone "$PASS_REPO" ~/.password-store
-echo "  Pass store cloned."
+if [ -d "$HOME/.password-store/.git" ]; then
+  echo "  Pass store already exists, pulling latest..."
+  git -C "$HOME/.password-store" pull
+else
+  git clone "$PASS_REPO" ~/.password-store
+  echo "  Pass store cloned."
+fi
 
 # ── Step 4: Machine type ──────────────────────────────────────────────────────
 echo ""
