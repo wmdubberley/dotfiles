@@ -69,13 +69,6 @@
   args:
     creates: /usr/bin/google-chrome
 
-# ── Calibre ───────────────────────────────────────────────────────────────────
-- name: Install Calibre
-  ansible.builtin.shell: |
-    wget -nv -O- https://download.calibre-ebook.com/linux-installer.sh | sh /dev/stdin
-  args:
-    creates: /usr/bin/calibre
-
 # ── draw.io ───────────────────────────────────────────────────────────────────
 - name: Install draw.io desktop
   become: true
@@ -115,6 +108,12 @@
   ansible.builtin.file:
     path: "{{ ansible_facts['env']['HOME'] }}/Programs/liquidbase"
     state: absent
+
+- name: Remove Calibre
+  become: true
+  ansible.builtin.shell: calibre-uninstall --yes
+  args:
+    removes: /usr/bin/calibre
 
 # ── SQLcl ─────────────────────────────────────────────────────────────────────
 - name: Install SQLcl
