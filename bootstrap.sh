@@ -1,6 +1,10 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# When run via curl | bash, stdin is the pipe not the terminal.
+# Redirect stdin to the terminal so read prompts work correctly.
+exec < /dev/tty
+
 DOTFILES_REPO="${DOTFILES_REPO:-https://github.com/wmdubberley/dotfiles.git}"
 PASS_REPO="${PASS_REPO:-https://github.com/wmdubberley/pass-store.git}"
 
