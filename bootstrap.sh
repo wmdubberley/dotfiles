@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-DOTFILES_REPO="${DOTFILES_REPO:-}"
-PASS_REPO="${PASS_REPO:-}"
+DOTFILES_REPO="${DOTFILES_REPO:-https://github.com/wmdubberley/dotfiles.git}"
+PASS_REPO="${PASS_REPO:-https://github.com/wmdubberley/pass-store.git}"
 
 echo "========================================"
 echo "  William's Machine Bootstrap"
@@ -18,16 +18,13 @@ sudo apt-get install -y git curl gpg pass ansible unzip wget
 echo ""
 echo "[2/7] GPG key restoration"
 echo "  Insert your USB drive and import your GPG private key:"
-echo "    gpg --import /media/<user>/USB/private.asc"
+echo "    gpg --import /media/william/keyfob/gpg-william-6B09748DDE4B5B88-2026.asc"
 echo ""
 read -rp "  Press ENTER once 'gpg --list-secret-keys' shows your key > "
 
 # ── Step 3: pass store ────────────────────────────────────────────────────────
 echo ""
 echo "[3/7] Clone pass store"
-if [ -z "$PASS_REPO" ]; then
-  read -rp "  Pass store repo URL (e.g. https://github.com/you/pass-store.git): " PASS_REPO
-fi
 git clone "$PASS_REPO" ~/.password-store
 echo "  Pass store cloned."
 
@@ -54,10 +51,6 @@ GIT_NAME="William Dubberley"
 # ── Step 6: Clone dotfiles + run Ansible ──────────────────────────────────────
 echo ""
 echo "[6/7] Clone dotfiles and run Ansible playbook"
-if [ -z "$DOTFILES_REPO" ]; then
-  read -rp "  Dotfiles repo URL (e.g. https://github.com/you/dotfiles.git): " DOTFILES_REPO
-fi
-
 DOTFILES_DIR="$HOME/dotfiles"
 git clone "$DOTFILES_REPO" "$DOTFILES_DIR"
 
