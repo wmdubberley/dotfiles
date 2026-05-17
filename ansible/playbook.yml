@@ -5,7 +5,7 @@
     - common
 
 - name: Apply workstation role
-  hosts: workstations
+  hosts: workstations:laptops
   roles:
     - workstation
 
