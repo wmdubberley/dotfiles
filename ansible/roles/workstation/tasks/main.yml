@@ -88,6 +88,34 @@
   args:
     creates: /usr/bin/drawio
 
+# ── Removed tools cleanup ─────────────────────────────────────────────────────
+- name: Remove Azure CLI
+  become: true
+  ansible.builtin.apt:
+    name: azure-cli
+    state: absent
+
+- name: Remove MongoDB CLI
+  become: true
+  ansible.builtin.apt:
+    name: mongodb-mongocli
+    state: absent
+
+- name: Remove dbt via pipx
+  ansible.builtin.shell: pipx uninstall dbt-core
+  args:
+    removes: "{{ ansible_env.HOME }}/.local/bin/dbt"
+
+- name: Remove Snowflake CLI via pipx
+  ansible.builtin.shell: pipx uninstall snowflake-cli
+  args:
+    removes: "{{ ansible_env.HOME }}/.local/bin/snow"
+
+- name: Remove Liquibase directory
+  ansible.builtin.file:
+    path: "{{ ansible_env.HOME }}/Programs/liquidbase"
+    state: absent
+
 # ── SQLcl ─────────────────────────────────────────────────────────────────────
 - name: Install SQLcl
   ansible.builtin.shell: |
