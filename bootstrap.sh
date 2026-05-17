@@ -46,30 +46,40 @@ case $MACHINE_TYPE_NUM in
 esac
 echo "  Machine group: $MACHINE_GROUP"
 
-# ── Step 5: Git identity for this machine ─────────────────────────────────────
+# ── Step 5: Git identity + sudo password ─────────────────────────────────────
 echo ""
 echo "[5/7] Git identity"
 read -rp "  Git email for this machine: " GIT_EMAIL
 GIT_NAME="William Dubberley"
+echo ""
+read -rsp "  Sudo password (for Ansible installs): " BECOME_PASS
+echo ""
 
 # ── Step 6: Clone dotfiles + run Ansible ──────────────────────────────────────
 echo ""
 echo "[6/7] Clone dotfiles and run Ansible playbook"
 DOTFILES_DIR="$HOME/dotfiles"
-git clone "$DOTFILES_REPO" "$DOTFILES_DIR"
+if [ -d "$DOTFILES_DIR/.git" ]; then
+  echo "  Dotfiles already exist, pulling latest..."
+  git -C "$DOTFILES_DIR" pull
+else
+  git clone "$DOTFILES_REPO" "$DOTFILES_DIR"
+fi
 
-# Write a temporary inventory targeting localhost in the chosen group
+# Write temporary files — cleaned up after playbook runs
 cat > /tmp/bootstrap_inventory.ini << EOF
 [${MACHINE_GROUP}]
 localhost ansible_connection=local
 EOF
+echo "$BECOME_PASS" > /tmp/.become_pass
+chmod 600 /tmp/.become_pass
 
 cd "$DOTFILES_DIR"
 ansible-playbook ansible/playbook.yml \
   -i /tmp/bootstrap_inventory.ini \
-  --ask-become-pass
+  --become-password-file /tmp/.become_pass
 
-rm /tmp/bootstrap_inventory.ini
+rm -f /tmp/bootstrap_inventory.ini /tmp/.become_pass
 
 # ── Step 7: Configure chezmoi and apply dotfiles ──────────────────────────────
 echo ""
