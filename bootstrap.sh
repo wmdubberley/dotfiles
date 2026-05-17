@@ -66,20 +66,18 @@ else
   git clone "$DOTFILES_REPO" "$DOTFILES_DIR"
 fi
 
-# Write temporary files — cleaned up after playbook runs
 cat > /tmp/bootstrap_inventory.ini << EOF
 [${MACHINE_GROUP}]
 localhost ansible_connection=local
 EOF
-echo "$BECOME_PASS" > /tmp/.become_pass
-chmod 600 /tmp/.become_pass
 
 cd "$DOTFILES_DIR"
+export ANSIBLE_BECOME_PASS="$BECOME_PASS"
 ansible-playbook ansible/playbook.yml \
-  -i /tmp/bootstrap_inventory.ini \
-  --become-password-file /tmp/.become_pass
+  -i /tmp/bootstrap_inventory.ini
+unset ANSIBLE_BECOME_PASS
 
-rm -f /tmp/bootstrap_inventory.ini /tmp/.become_pass
+rm -f /tmp/bootstrap_inventory.ini
 
 # ── Step 7: Configure chezmoi and apply dotfiles ──────────────────────────────
 echo ""
