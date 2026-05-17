@@ -15,6 +15,8 @@
       - python3
       - python3-pip
       - python3-venv
+      - python3-full
+      - pipx
       - btop
       - htop
       - eza
@@ -125,9 +127,9 @@
     creates: "{{ ansible_env.HOME }}/.local/bin/chezmoi"
 
 # ── OCI CLI ───────────────────────────────────────────────────────────────────
-- name: Install OCI CLI
+- name: Install OCI CLI via pipx
   ansible.builtin.shell: |
-    python3 -m pip install oci-cli --user
+    pipx install oci-cli
   args:
     creates: "{{ ansible_env.HOME }}/.local/bin/oci"
 
