@@ -42,14 +42,14 @@ fi
 # ── Step 4: Machine type ──────────────────────────────────────────────────────
 echo ""
 echo "[4/7] Select machine type"
-echo "  1) workstations  (desktop/laptop — full GUI + dev tools)"
+echo "  1) workstations  (desktop — full GUI + dev tools)"
 echo "  2) servers       (headless — docker, kubectl, CLI tools)"
-echo "  3) minimal       (CLI only — zsh, git, OCI CLI, VSCode)"
+echo "  3) laptops       (laptop — full GUI + dev tools)"
 echo "  4) homeservers   (local dev cluster — k3s, Docker, Samba, Portainer)"
 read -rp "  Choice [1-4]: " MACHINE_TYPE_NUM
 case $MACHINE_TYPE_NUM in
   2) MACHINE_GROUP="servers" ;;
-  3) MACHINE_GROUP="minimal" ;;
+  3) MACHINE_GROUP="laptops" ;;
   4) MACHINE_GROUP="homeservers" ;;
   *) MACHINE_GROUP="workstations" ;;
 esac
