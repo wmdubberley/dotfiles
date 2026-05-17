@@ -46,14 +46,11 @@ case $MACHINE_TYPE_NUM in
 esac
 echo "  Machine group: $MACHINE_GROUP"
 
-# ── Step 5: Git identity + sudo password ─────────────────────────────────────
+# ── Step 5: Git identity ──────────────────────────────────────────────────────
 echo ""
 echo "[5/7] Git identity"
 read -rp "  Git email for this machine: " GIT_EMAIL
 GIT_NAME="William Dubberley"
-echo ""
-read -rsp "  Sudo password (for Ansible installs): " BECOME_PASS
-echo ""
 
 # ── Step 6: Clone dotfiles + run Ansible ──────────────────────────────────────
 echo ""
@@ -71,13 +68,15 @@ cat > /tmp/bootstrap_inventory.ini << EOF
 localhost ansible_connection=local
 EOF
 
-# Cache sudo credentials so Ansible become works without prompting
-echo "$BECOME_PASS" | sudo -S -v
+# sudo-rs requires an interactive TTY — grant temporary NOPASSWD so Ansible
+# doesn't need to prompt. One real interactive sudo prompt here is enough.
+echo "  Granting temporary passwordless sudo for Ansible (you will be prompted once)..."
+sudo sh -c "echo '${USER} ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/bootstrap-temp && chmod 440 /etc/sudoers.d/bootstrap-temp"
 
 cd "$DOTFILES_DIR"
-ansible-playbook ansible/playbook.yml \
-  -i /tmp/bootstrap_inventory.ini
+ansible-playbook ansible/playbook.yml -i /tmp/bootstrap_inventory.ini
 
+sudo rm -f /etc/sudoers.d/bootstrap-temp
 rm -f /tmp/bootstrap_inventory.ini
 
 # ── Step 7: Configure chezmoi and apply dotfiles ──────────────────────────────
