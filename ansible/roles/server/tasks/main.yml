@@ -106,8 +106,19 @@
 
 - name: Gather unmounted partitions from lsblk
   ansible.builtin.shell: |
-    lsblk -o NAME,FSTYPE,LABEL,MOUNTPOINT -rn \
-      | awk '$2 != "" && $4 == "" && $1 !~ /^(loop|sr)/ {print $1 "," $2 "," ($3 == "" ? $1 : $3)}'
+    lsblk -o NAME,FSTYPE,LABEL,MOUNTPOINT --pairs | python3 -c "
+    import sys, re
+    skip = {'swap', 'LVM2_member', ''}
+    for line in sys.stdin:
+        f = dict(re.findall(r'(\w+)=\"([^\"]*)\"', line))
+        name = f.get('NAME', '')
+        fstype = f.get('FSTYPE', '')
+        label = f.get('LABEL', '')
+        mp = f.get('MOUNTPOINT', '')
+        if fstype not in skip and not mp and not re.match(r'^(loop|sr|dm-)', name):
+            lbl = re.sub(r'[^a-zA-Z0-9._-]', '_', label or name)
+            print(f'{name},{fstype},{lbl}')
+    "
   register: lsblk_output
   changed_when: false
 
