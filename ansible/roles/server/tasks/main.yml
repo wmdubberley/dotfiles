@@ -78,11 +78,13 @@
 
 # ── Portainer ─────────────────────────────────────────────────────────────────
 - name: Create Portainer data volume
+  become: true
   ansible.builtin.shell: |
     docker volume create portainer_data
   changed_when: false
 
 - name: Run Portainer CE container
+  become: true
   ansible.builtin.shell: |
     docker run -d \
       --name portainer \
