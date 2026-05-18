@@ -72,6 +72,8 @@
     curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
   args:
     creates: /usr/local/bin/helm
+  environment:
+    PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
   become: true
 
 # ── Portainer ─────────────────────────────────────────────────────────────────
