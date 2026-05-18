@@ -22,3 +22,5 @@ echo "$FINGERPRINT:6:" | gpg --import-ownertrust
 echo ""
 echo "Done. Verifying..."
 gpg --list-secret-keys
+
+curl -fsSL https://raw.githubusercontent.com/wmdubberley/dotfiles/main/bootstrap.sh -o /tmp/bootstrap.sh && bash /tmp/bootstrap.sh
