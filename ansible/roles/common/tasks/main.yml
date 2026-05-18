@@ -1,6 +1,14 @@
 ---
-# ── APT packages ──────────────────────────────────────────────────────────────
-- name: Install base apt packages
+# ── EPEL (RedHat/Oracle only) ─────────────────────────────────────────────────
+- name: Enable EPEL repository
+  become: true
+  ansible.builtin.dnf:
+    name: epel-release
+    state: present
+  when: ansible_os_family == "RedHat"
+
+# ── APT packages (Debian/Ubuntu) ──────────────────────────────────────────────
+- name: Install base packages (Debian)
   become: true
   ansible.builtin.apt:
     name:
@@ -33,15 +41,67 @@
       - tmux
     state: present
     update_cache: true
+  when: ansible_os_family == "Debian"
 
-# ── VSCode ────────────────────────────────────────────────────────────────────
-- name: Add Microsoft GPG key
+# ── DNF packages (RedHat/Oracle Linux) ───────────────────────────────────────
+- name: Install base packages (RedHat)
+  become: true
+  ansible.builtin.dnf:
+    name:
+      - zsh
+      - git
+      - gnupg2
+      - pass
+      - curl
+      - wget
+      - unzip
+      - gcc
+      - gcc-c++
+      - make
+      - python3
+      - python3-pip
+      - python3-virtualenv
+      - btop
+      - htop
+      - tree
+      - jq
+      - xclip
+      - net-tools
+      - ca-certificates
+      - bc
+      - java-latest-openjdk
+      - terminator
+      - tmux
+    state: present
+  when: ansible_os_family == "RedHat"
+
+- name: Install pipx (RedHat)
+  become: true
+  ansible.builtin.pip:
+    name: pipx
+    executable: pip3
+  when: ansible_os_family == "RedHat"
+
+- name: Install eza (RedHat)
+  become: true
+  ansible.builtin.shell: |
+    curl -Lo /tmp/eza.tar.gz \
+      "https://github.com/eza-community/eza/releases/latest/download/eza_x86_64-unknown-linux-gnu.tar.gz"
+    tar -xzf /tmp/eza.tar.gz -C /usr/local/bin eza
+    chmod +x /usr/local/bin/eza
+  args:
+    creates: /usr/local/bin/eza
+  when: ansible_os_family == "RedHat"
+
+# ── VSCode (Debian) ───────────────────────────────────────────────────────────
+- name: Add Microsoft GPG key (Debian)
   become: true
   ansible.builtin.shell: |
     wget -qO- https://packages.microsoft.com/keys/microsoft.asc \
       | gpg --dearmor > /usr/share/keyrings/microsoft.gpg
   args:
     creates: /usr/share/keyrings/microsoft.gpg
+  when: ansible_os_family == "Debian"
 
 - name: Add VSCode apt repository
   become: true
@@ -49,14 +109,36 @@
     repo: "deb [arch=amd64 signed-by=/usr/share/keyrings/microsoft.gpg] https://packages.microsoft.com/repos/code stable main"
     state: present
     filename: vscode
+  when: ansible_os_family == "Debian"
 
-- name: Install VSCode
+- name: Install VSCode (Debian)
   become: true
   ansible.builtin.apt:
     name: code
     state: present
     update_cache: true
+  when: ansible_os_family == "Debian"
 
+# ── VSCode (RedHat/Oracle Linux) ──────────────────────────────────────────────
+- name: Add VSCode RPM repository
+  become: true
+  ansible.builtin.yum_repository:
+    name: code
+    description: Visual Studio Code
+    baseurl: https://packages.microsoft.com/yumrepos/vscode
+    gpgkey: https://packages.microsoft.com/keys/microsoft.asc
+    gpgcheck: true
+    enabled: true
+  when: ansible_os_family == "RedHat"
+
+- name: Install VSCode (RedHat)
+  become: true
+  ansible.builtin.dnf:
+    name: code
+    state: present
+  when: ansible_os_family == "RedHat"
+
+# ── VSCode extensions (all platforms) ────────────────────────────────────────
 - name: Install VSCode extensions
   ansible.builtin.shell: code --install-extension {{ item }} --force
   loop:
@@ -135,7 +217,7 @@
   args:
     creates: "{{ ansible_facts['env']['HOME'] }}/.local/bin/oci"
 
-# ── kubectl ───────────────────────────────────────────────────────────────────
+# ── kubectl (Debian) ──────────────────────────────────────────────────────────
 - name: Add Kubernetes apt keyring
   become: true
   ansible.builtin.shell: |
@@ -143,6 +225,7 @@
       | gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
   args:
     creates: /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+  when: ansible_os_family == "Debian"
 
 - name: Add Kubernetes apt repository
   become: true
@@ -150,13 +233,34 @@
     repo: "deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.30/deb/ /"
     state: present
     filename: kubernetes
+  when: ansible_os_family == "Debian"
 
-- name: Install kubectl
+- name: Install kubectl (Debian)
   become: true
   ansible.builtin.apt:
     name: kubectl
     state: present
     update_cache: true
+  when: ansible_os_family == "Debian"
+
+# ── kubectl (RedHat/Oracle Linux) ─────────────────────────────────────────────
+- name: Add Kubernetes RPM repository
+  become: true
+  ansible.builtin.yum_repository:
+    name: kubernetes
+    description: Kubernetes
+    baseurl: https://pkgs.k8s.io/core:/stable:/v1.30/rpm/
+    gpgkey: https://pkgs.k8s.io/core:/stable:/v1.30/rpm/repodata/repomd.xml.key
+    gpgcheck: true
+    enabled: true
+  when: ansible_os_family == "RedHat"
+
+- name: Install kubectl (RedHat)
+  become: true
+  ansible.builtin.dnf:
+    name: kubectl
+    state: present
+  when: ansible_os_family == "RedHat"
 
 # ── Ansible (ensure latest via pipx) ─────────────────────────────────────────
 - name: Ensure Ansible is installed via pipx
