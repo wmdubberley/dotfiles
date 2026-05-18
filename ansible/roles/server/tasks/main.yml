@@ -130,7 +130,7 @@
     mode: "0644"
   notify: Restart Samba
 
-- name: Enable and start Samba services
+- name: Enable and start Samba services (Debian)
   become: true
   ansible.builtin.systemd:
     name: "{{ item }}"
@@ -139,6 +139,18 @@
   loop:
     - smbd
     - nmbd
+  when: ansible_os_family == "Debian"
+
+- name: Enable and start Samba services (RedHat)
+  become: true
+  ansible.builtin.systemd:
+    name: "{{ item }}"
+    enabled: true
+    state: started
+  loop:
+    - smb
+    - nmb
+  when: ansible_os_family == "RedHat"
 
 - name: Open Samba ports in firewalld
   become: true
