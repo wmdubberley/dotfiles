@@ -98,6 +98,12 @@
     creates: /var/lib/docker/volumes/portainer_data
 
 # ── External drive mount points ───────────────────────────────────────────────
+- name: Create sambashare group
+  become: true
+  ansible.builtin.group:
+    name: sambashare
+    state: present
+
 - name: Create storage mount point directories
   become: true
   ansible.builtin.file:
