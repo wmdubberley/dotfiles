@@ -104,6 +104,13 @@
     name: sambashare
     state: present
 
+- name: Remove stale empty mount point directories
+  become: true
+  ansible.builtin.shell: |
+    find /media/{{ ansible_facts['env']['USER'] }} -mindepth 1 -maxdepth 1 -type d -empty -exec rmdir {} +
+  changed_when: false
+  failed_when: false
+
 - name: Gather unmounted partitions from lsblk
   ansible.builtin.shell: |
     lsblk -o NAME,FSTYPE,LABEL,MOUNTPOINT --pairs | python3 -c "
