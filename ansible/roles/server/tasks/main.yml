@@ -1,11 +1,40 @@
 ---
 # ── Docker Engine ─────────────────────────────────────────────────────────────
-- name: Install Docker Engine
+- name: Install Docker Engine (Debian)
   become: true
   ansible.builtin.shell: |
     curl -fsSL https://get.docker.com | sh
   args:
     creates: /usr/bin/docker
+  when: ansible_os_family == "Debian"
+
+- name: Add Docker CE RPM repository (RedHat)
+  become: true
+  ansible.builtin.get_url:
+    url: https://download.docker.com/linux/rhel/docker-ce.repo
+    dest: /etc/yum.repos.d/docker-ce.repo
+    mode: "0644"
+  when: ansible_os_family == "RedHat"
+
+- name: Install Docker Engine (RedHat)
+  become: true
+  ansible.builtin.dnf:
+    name:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+      - docker-buildx-plugin
+      - docker-compose-plugin
+    state: present
+  when: ansible_os_family == "RedHat"
+
+- name: Enable and start Docker (RedHat)
+  become: true
+  ansible.builtin.systemd:
+    name: docker
+    enabled: true
+    state: started
+  when: ansible_os_family == "RedHat"
 
 - name: Add user to docker group
   become: true
