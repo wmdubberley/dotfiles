@@ -12,7 +12,7 @@ export PATH="$HOME/.local/bin:$HOME/bin:$PATH"
 plugins=(git ansible python pip terraform)
 
 source $ZSH/oh-my-zsh.sh
-source ~/env.sh
+[ -f ~/.env.sh ] && source ~/.env.sh
 
 if [ -e $HOME/.aliases ]; then
     source $HOME/.aliases
