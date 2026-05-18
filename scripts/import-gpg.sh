@@ -16,7 +16,8 @@ gpg --import "$KEY_FILE"
 
 echo ""
 echo "Setting trust to ultimate..."
-echo "6B09748DDE4B5B88:6:" | gpg --import-ownertrust
+FINGERPRINT=$(gpg --with-colons --fingerprint 6B09748DDE4B5B88 | awk -F: '/^fpr/ {print $10; exit}')
+echo "$FINGERPRINT:6:" | gpg --import-ownertrust
 
 echo ""
 echo "Done. Verifying..."
