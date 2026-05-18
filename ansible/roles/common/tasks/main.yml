@@ -86,7 +86,8 @@
   ansible.builtin.shell: |
     curl -Lo /tmp/eza.tar.gz \
       "https://github.com/eza-community/eza/releases/latest/download/eza_x86_64-unknown-linux-gnu.tar.gz"
-    tar -xzf /tmp/eza.tar.gz -C /usr/local/bin eza
+    tar -xzf /tmp/eza.tar.gz -C /tmp/
+    cp /tmp/eza /usr/local/bin/eza
     chmod +x /usr/local/bin/eza
   args:
     creates: /usr/local/bin/eza
